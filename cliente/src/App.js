@@ -13,10 +13,12 @@ import {
 } from './Helpers/auth-helpers';
 import Nav from './components/Nav';
 import Loading from './components/Loading';
+import Error from './components/Error';
 import Main from './components/Main';
 
 import Signup from './view/Signup';
 import Login from './view/Login';
+import Upload from './view/Upload';
 
 initAxiosInterceptors();
 
@@ -25,6 +27,7 @@ export default function App() {
 	const [cargandoUsuario, setCargandoUsuario] = useState(
 		true
 	);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		const cargarUsuario = async () => {
@@ -57,6 +60,14 @@ export default function App() {
 		setToken(data.token);
 	};
 
+	const mostrarError = (mensaje) => {
+		setError(mensaje);
+	};
+
+	const ocultarError = () => {
+		setError(null);
+	};
+
 	const signup = async (usuario) => {
 		const { data } = await axios.post(
 			'/api/usuarios/signup',
@@ -82,18 +93,27 @@ export default function App() {
 
 	return (
 		<Routes>
-			<Nav />
+			<Nav usuario={usuario}/>
+			<Error mensaje={error} ocultarError={ocultarError} />
 			{usuario ? (
-				<LoginRoutes />
+				<LoginRoutes mostrarError={mostrarError} />
 			) : (
-				<LogoutRoutes login={login} signup={signup} />
+				<LogoutRoutes
+					login={login}
+					signup={signup}
+					mostrarError={mostrarError}
+				/>
 			)}
 		</Routes>
 	);
 }
 
-const LoginRoutes = () => (
+const LoginRoutes = ({ mostrarError }) => (
 	<Switch>
+		<Route
+			path='/upload'
+			component={(props) =>  <Upload {...props} mostrarError={mostrarError} />}
+		/>
 		<Route
 			path='/'
 			component={() => (
@@ -106,15 +126,27 @@ const LoginRoutes = () => (
 	</Switch>
 );
 
-const LogoutRoutes = ({ login, signup }) => (
+const LogoutRoutes = ({ login, signup, mostrarError }) => (
 	<Switch>
 		<Route
 			path='/login'
-			render={(props) => <Login {...props} loggin={login} />}
+			render={(props) => (
+				<Login
+					{...props}
+					loggin={login}
+					mostrarError={mostrarError}
+				/>
+			)}
 		/>
 		<Route
 			default
-			render={(props) => <Signup {...props} signup={signup} />}
+			render={(props) => (
+				<Signup
+					{...props}
+					signup={signup}
+					mostrarError={mostrarError}
+				/>
+			)}
 		/>
 	</Switch>
 );

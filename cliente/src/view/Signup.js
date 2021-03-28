@@ -3,7 +3,7 @@ import Main from '../components/Main';
 import ImageSignup from '../imagenes/signup.png';
 import { Link } from 'react-router-dom';
 
-const Signup = ({ signup }) => {
+const Signup = ({ signup, mostrarError }) => {
 	const [submit, setSubmit] = useState({
 		email: 'Email...',
 		username: 'Username...',
@@ -24,8 +24,9 @@ const Signup = ({ signup }) => {
 		e.preventDefault();
 
 		try {
-			signup(submit);
+			await signup(submit);
 		} catch (error) {
+			mostrarError(error.response.data.message)
 			console.log(error);
 		}
 	};

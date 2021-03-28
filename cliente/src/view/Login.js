@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Main from '../components/Main';
 import { Link } from 'react-router-dom';
 
-const Login = ({ loggin }) => {
+const Login = ({ loggin, mostrarError }) => {
 	const [login, setLogin] = useState({
 		email: 'Email...',
 		password: 'Password...',
@@ -19,8 +19,9 @@ const Login = ({ loggin }) => {
 		e.preventDefault();
 
 		try {
-			loggin(login.email, login.password);
+			await loggin(login.email, login.password);
 		} catch (error) {
+			mostrarError(error.response.data.message)
 			console.log(error);
 		}
 	};
@@ -39,6 +40,7 @@ const Login = ({ loggin }) => {
 									placeholder={login.email}
 									className='Form__field'
 									onChange={handleInputChange}
+									required
 								/>
 							</label>
 							<label htmlFor='password'>
