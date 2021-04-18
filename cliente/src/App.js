@@ -112,7 +112,7 @@ const LoginRoutes = ({ mostrarError }) => (
 	<Switch>
 		<Route
 			path='/upload'
-			component={(props) =>  <Upload {...props} mostrarError={mostrarError} />}
+			render={(props) =>  <Upload {...props} mostrarError={mostrarError} />}
 		/>
 		<Route
 			path='/'
